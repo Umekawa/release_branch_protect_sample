@@ -1,0 +1,23 @@
+name: Ensure PR to release comes from main
+
+on:
+  pull_request:
+    branches:
+      - release
+    types: [opened, synchronize]
+
+jobs:
+  check-pr-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v3
+
+    - name: Check if the base branch is 'release' and head branch is not 'main'
+      run: |
+        if [ "${{ github.event.pull_request.base.ref }}" == "release" ] && [ "${{ github.event.pull_request.head.ref }}" != "main" ]; then
+          echo "Error: Pull request to release must come from main."
+          exit 1
+        fi
+      shell: bash
